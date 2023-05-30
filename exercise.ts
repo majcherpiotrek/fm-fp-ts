@@ -26,11 +26,7 @@ type Post = {
 // Exercise 1
 const getSessionUser =
     (users: User[]) =>
-    (session: Session): O.Option<User> =>
-        pipe(
-            users,
-            RA.findFirst((user) => user.id === session.userId)
-        );
+    (session: Session): O.Option<User> => O.none; // TODO return associated with the session
 
 // Exercise 2
 type Request<T> = {
@@ -40,8 +36,7 @@ type Request<T> = {
 
 const getUserFromRequest =
     <T>(users: User[]) =>
-    (request: Request<T>): O.Option<User> =>
-        pipe(request.session, O.fromNullable, O.chain(getSessionUser(users)));
+    (request: Request<T>): O.Option<User> => O.none; // TODO return associated with the request
 
 // Exercise 3
 type UnauthorizedError = {
@@ -58,23 +53,9 @@ type AppError = UnauthorizedError | NotAuthenticatedError;
 
 const getUserFromRequestE =
     <T>(users: User[]) =>
-    (request: Request<T>): E.Either<NotAuthenticatedError, User> =>
-        pipe(
-            request.session,
-            E.fromNullable<NotAuthenticatedError>({
-                type: "not-authenticated",
-                message: "Session missing",
-            }),
-            E.chain(
-                flow(
-                    getSessionUser(users),
-                    E.fromOption(() => ({
-                        type: "not-authenticated",
-                        message: "User missing",
-                    }))
-                )
-            )
-        );
+    (request: Request<T>): E.Either<NotAuthenticatedError, User> => pipe(
+        // TODO return user associated with the request and respective errors if not found
+    );
 
 // Exercise 4
 const validateRequest =
@@ -82,20 +63,7 @@ const validateRequest =
     (allowedRoles: UserRole[]) =>
     (request: Request<T>): E.Either<AppError, Request<T>> =>
         pipe(
-            request,
-            getUserFromRequestE<T>(users),
-            E.chain(
-                E.fromPredicate<User, AppError>(
-                    (user) =>
-                        allowedRoles.some((role) => user.roles.includes(role)),
-                    (user) => ({
-                        type: "unauthorized",
-                        requiredRoles: allowedRoles,
-                        message: `User ${user.name} is not authorized`,
-                    })
-                )
-            ),
-            E.map(() => request)
+          // TODO return request if user has allowed roles
         );
 
 // Exercise 5
@@ -106,15 +74,6 @@ const addPost =
     (users: User[], posts: Post[]) =>
     (request: Request<AddPostRequest>): E.Either<AppError, Post[]> =>
         pipe(
-            request,
-            validateRequest<AddPostRequest>(users)(["user"]),
-            E.map((request) => [
-                ...posts,
-                {
-                    id: generateId(),
-                    content: request.payload.content,
-                    userId: request.session!.userId,
-                },
-            ])
+               // TODO apply request only if it's validated
         );
 
