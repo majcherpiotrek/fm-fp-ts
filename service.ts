@@ -62,50 +62,13 @@ export const service = {
     createTodoItem: (
         todoItem: CreateTodoItemRequest
     ): TE.TaskEither<AppError, TodoItem> => {
-        return pipe(
-            validateTodoItemLength(todoItem),
-            TE.fromEither,
-            TE.flatMap((validTodoItem) =>
-                TE.tryCatch(
-                    () =>
-                        dbClient.addTodoItem({
-                            ...validTodoItem,
-                            expiryDate: validTodoItem.expiryDate.toISOString(),
-                        }),
-                    (error) =>
-                        createAppError(
-                            "db",
-                            "Failed to create a todo item",
-                            error
-                        )
-                )
-            ),
-            TE.flatMapEither(decodeWith(todoItemDecoder))
-            // In real world we code decode inside a transaction, and rollback if saved model is incorrect
-            // It could indicate discrepancies between our code and the database schema
-        );
+        return TE.left({ errorType: "unexpected", message: "Not implemented" });
     },
 
     updateTodoItem: (
         id: string,
         updateRequest: UpdateTodoItemRequest
     ): TE.TaskEither<AppError, TodoItem> => {
-        return pipe(
-            service.getTodoItem(id),
-            TE.flatMapEither(validateTodoItemNotExpired),
-            TE.flatMapEither(() => validateTodoItemLength(updateRequest)),
-            TE.flatMap((validUpdateRequest) =>
-                TE.tryCatch(
-                    () => dbClient.updateTodoItem(id, validUpdateRequest),
-                    (error) =>
-                        createAppError(
-                            "db",
-                            `Failed to update a todo item with id ${id}`,
-                            error
-                        )
-                )
-            ),
-            TE.flatMapEither(decodeWith(todoItemDecoder))
-        );
+        return TE.left({ errorType: "unexpected", message: "Not implemented" });
     },
 };
