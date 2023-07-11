@@ -24,7 +24,7 @@ const getUnknownErrorMessage = (error: unknown): string => {
     return "Unknown error";
 };
 
-const parseError = (
+export const createAppError = (
     errorType: ErrorType,
     message: string,
     cause?: unknown
