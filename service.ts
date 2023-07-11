@@ -1,7 +1,11 @@
 import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
 import { AppError, createAppError } from "./errors";
-import { TodoItem, UpdateTodoItemRequest } from "./types";
+import {
+    CreateTodoItemRequest,
+    TodoItem,
+    UpdateTodoItemRequest,
+} from "./types";
 import { flow, pipe } from "fp-ts/function";
 import { dbClient } from "./dbClient";
 import { todoItemDecoder } from "./codecs";
@@ -55,9 +59,11 @@ export const service = {
         );
     },
 
-    createTodoItem: (todoItem: TodoItem): TE.TaskEither<AppError, TodoItem> => {
+    createTodoItem: (
+        todoItem: CreateTodoItemRequest
+    ): TE.TaskEither<AppError, TodoItem> => {
         return pipe(
-            validateTodoItemNotExpired(todoItem),
+            validateTodoItemLength(todoItem),
             TE.fromEither,
             TE.flatMap((validTodoItem) =>
                 TE.tryCatch(

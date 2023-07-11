@@ -1,3 +1,5 @@
+import { nanoid } from "nanoid";
+
 export type DbTodoItem = {
     id: string;
     title: string | null;
@@ -10,12 +12,13 @@ let todos: DbTodoItem[] = [];
 // Let's assume this is not our code, it could be for example a generated Prisma ORM client
 
 export const dbClient = {
-    addTodoItem: (todoItem: DbTodoItem): Promise<DbTodoItem> => {
+    addTodoItem: (todoItem: Omit<DbTodoItem, "id">): Promise<DbTodoItem> => {
         if ((Math.random() * 100) % 5 === 0) {
             return Promise.reject(new Error("Network error"));
         }
-        todos.push(todoItem);
-        return Promise.resolve(todoItem);
+        const createdTodo = { ...todoItem, id: nanoid() };
+        todos.push();
+        return Promise.resolve(createdTodo);
     },
 
     getTodoItem: (id: string): Promise<DbTodoItem | null> => {

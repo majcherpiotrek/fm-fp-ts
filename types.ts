@@ -9,10 +9,11 @@ export type Request = {
     headers: Headers;
     user?: User;
     body?: unknown;
+    query?: Record<string, string>;
 };
 
 export type ApiResponse = {
-    statusCode: number;
+    status: number;
     body: unknown;
 };
 
@@ -22,6 +23,8 @@ export type TodoItem = {
     completed: boolean;
     expiryDate: Date;
 };
+
+export type CreateTodoItemRequest = Omit<TodoItem, "id">;
 
 export type UpdateTodoItemRequest = Partial<
     Omit<TodoItem, "id" | "expiryDate">
